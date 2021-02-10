@@ -3,21 +3,142 @@ from netmiko import ConnectHandler
 # R1-R5 auto config
 # config static route to management plane
 # config default route to nat in ospf
-device_ip = ['172.31.182.3', '172.31.182.4', '172.31.182.5', '172.31.182.6', '172.31.182.7', '172.31.182.8', '172.31.182.9']
+# device_ip = ['172.31.182.3', '172.31.182.4', '172.31.182.5', '172.31.182.6', '172.31.182.7', '172.31.182.8', '172.31.182.9']
 username = 'admin'
 password = 'cisco'
-loopback_ip = ['172.20.182.3', '172.20.182.4', '172.20.182.5', '172.20.182.6', '172.20.182.7', '172.20.182.8', '172.20.182.9']
-for ip in device_ip:
-    device_params = {'device_type': 'cisco_ios',
-                    'ip' : ip,
-                    'username': username,
-                    'password':password,
-                    }
-    config_l0 = ['conf t', 'int loopback 0', 'ip add {} 255.255.255.255'.format(loopback_ip[device_ip.index(ip)]), 'end']
-    with ConnectHandler(**device_params) as ssh:
-        ssh.enable()
-        # ssh.send_config_set(config_l0)
-        result = ssh.send_command('sh ip int br')
-        print('============= '+ssh.send_command('sh run | sect hostname')+' =============')
+
+routers = [
+    {
+        "device_ip":"172.31.182.4",
+        "interfaces":
+            [
+                {
+                    "int":"l0",
+                    "ip":"172.20.182.4",
+                    "netmask":"255.255.255.255"
+                },
+                {
+                    "int":"g0/1",
+                    "ip":"172.31.182.17",
+                    "netmask":"255.255.255.240"
+                },
+                {
+                    "int":"g0/2",
+                    "ip":"172.31.182.33",
+                    "netmask":"255.255.255.240"
+                }
+            ]
+    },
+    {
+        "device_ip":"172.31.182.5",
+        "interfaces":
+            [
+                {
+                    "int":"l0",
+                    "ip":"172.20.182.5",
+                    "netmask":"255.255.255.255"
+                },
+                {
+                    "int":"g0/1",
+                    "ip":"172.31.182.18",
+                    "netmask":"255.255.255.240"
+                },
+                {
+                    "int":"g0/2",
+                    "ip":"172.31.182.49",
+                    "netmask":"255.255.255.240"
+                }
+            ]
+    },
+    {
+        "device_ip":"172.31.182.6",
+        "interfaces":
+            [
+                {
+                    "int":"l0",
+                    "ip":"172.20.182.6",
+                    "netmask":"255.255.255.255"
+                },
+                {
+                    "int":"g0/1",
+                    "ip":"172.31.182.34",
+                    "netmask":"255.255.255.240"
+                },
+                {
+                    "int":"g0/2",
+                    "ip":"172.31.182.50",
+                    "netmask":"255.255.255.240"
+                },
+                {
+                    "int":"g0/3",
+                    "ip":"172.31.182.65",
+                    "netmask":"255.255.255.240"
+                }
+            ]
+    },
+    {
+        "device_ip":"172.31.182.7",
+        "interfaces":
+            [
+                {
+                    "int":"l0",
+                    "ip":"172.20.182.7",
+                    "netmask":"255.255.255.255"
+                },
+                {
+                    "int":"g0/1",
+                    "ip":"172.31.182.66",
+                    "netmask":"255.255.255.240"
+                },
+            ]
+    },
+    {
+        "device_ip":"172.31.182.9",
+        "interfaces":
+            [
+                {
+                    "int":"l0",
+                    "ip":"172.20.182.9",
+                    "netmask":"255.255.255.255"
+                },
+                {
+                    "int":"g0/1",
+                    "ip":"172.31.182.67",
+                    "netmask":"255.255.255.240"
+                },
+            ]
+    }
+]
+
+def conf_loopback():
+    for ip in routers:
+        device_params = {'device_type': 'cisco_ios',
+                        'ip' : ip["device_ip"],
+                        'username': username,
+                        'password':password,
+                        }
+        config_l0 = ['conf t', 'int loopback 0', 'ip add {} 255.255.255.255'.format(ip["interfaces"][0]['ip']), 'end']
+        with ConnectHandler(**device_params) as ssh:
+            ssh.enable()
+            ssh.send_config_set(config_l0)
+            result = ssh.send_command('sh ip int br')
+            print('============= '+ssh.send_command('sh run | sect hostname')+' =============')
+            print(result)
+            print('==========================================================================')
+
+def conf_int():
+    for int in routers:
+        device_params = {'device_type': 'cisco_ios',
+                        'ip' : int["device_ip"],
+                        'username': username,
+                        'password':password,
+                        }
+        for num in range(1,len(int["interfaces"])):
+            config_int = ['conf t', 'int {}'.format(int["interfaces"][num]["int"]), 'ip add {} {}'.format(int['interfaces'][num]["ip"], int['interfaces'][num]["netmask"]), 'no shut']
+            with ConnectHandler(**device_params) as ssh:
+                ssh.enable()
+                ssh.send_config_set(config_int)
+                result = ssh.send_command('sh ip int br')
+        print()
         print(result)
-        print('==========================================================================')
+conf_int()
