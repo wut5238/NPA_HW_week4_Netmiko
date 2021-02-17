@@ -3,6 +3,11 @@
   loopback: yes
   num: -1
   router: no
+  interface:
+    - id: 1
+      desc: "connect to G0/1 of R1"
+    - id: 2
+      desc: "connect to G0/1 of R2"
   
 - name: R1
   loopback: yes
@@ -12,11 +17,11 @@
     - id: 1
       ip: 172.31.182.17
       netmask: 255.255.255.240
-      desc: "connect to R2"
+      desc: "connect to G0/1 of S2"
     - id: 2
       ip: 172.31.182.33
       netmask: 255.255.255.240
-      desc: "connect to R3"
+      desc: "connect to G0/1 of R3"
 
 - name: R2
   loopback: yes
@@ -26,11 +31,11 @@
     - id: 1
       ip: 172.31.182.18
       netmask: 255.255.255.240
-      desc: "connect to R1"
+      desc: "connect to G0/2 of S1"
     - id: 2
       ip: 172.31.182.49
       netmask: 255.255.255.240
-      desc: "connect to R3"
+      desc: "connect to G0/2 of R3"
 
 - name: R3
   loopback: yes
@@ -40,15 +45,15 @@
     - id: 1
       ip: 172.31.182.34
       netmask: 255.255.255.240
-      desc: "conect to R1"
+      desc: "connect to G0/2 of R1"
     - id: 2
       ip: 172.31.182.50
       netmask: 255.255.255.240
-      desc: "connect to R2"
+      desc: "connect to G0/2 of R2"
     - id: 3
       ip: 172.31.182.65
       netmask: 255.255.255.240
-      desc: "connect to S2"
+      desc: "connect to G0/1 of S2"
 
 - name: R4
   loopback: yes
@@ -58,20 +63,26 @@
     - id: 1
       ip: 172.31.182.66
       netmask: 255.255.255.240
-      desc: "connect to S2"
+      desc: "connect to G0/2 of S2"
 
 - name: S2
   loopback: yes
   num: 4
   router: no
+  interface:
+    - id: 1
+      desc: "connect to G0/3 of R3"
+    - id: 2
+      desc: "connect to G0/1 of R4"
+    - id: 3
+      desc: "connect to G0/1 of R5"
 
 - name: R5
   loopback: yes
-  num: 4
+  num: 5
   router: yes
   interface:
     - id: 1
       ip: 172.31.182.67
       netmask: 255.255.255.240
-      desc: "connect to S2"
-      
+      desc: "connect to G0/3 of S2"

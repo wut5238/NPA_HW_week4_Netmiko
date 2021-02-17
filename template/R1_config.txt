@@ -1,29 +1,27 @@
-hostname {{name}}
+hostname R1
 !
-{% if loopback %}
 interface loopback 0
- ip address 172.20.182.{{num+4}} 255.255.255.255
-{% endif %}
+ ip address 172.20.182.4 255.255.255.255
 !
-{% for int in interface %}
-interface gi0/{{int.id}}
- {% if router %}
- ip address {{int.ip}} {{int.netmask}}
- {% endif %}
+interface gi0/1
+ ip address 172.31.182.17 255.255.255.240
  ip access-group blockalltraffic in
- description {{int.desc}}
+ description connect to G0/1 of S2
  no shutdown
  exit
-{% endfor %}
-{% if router %}
+interface gi0/2
+ ip address 172.31.182.33 255.255.255.240
+ ip access-group blockalltraffic in
+ description connect to G0/1 of R3
+ no shutdown
+ exit
 !
 lldp run
 cdp run
 !
 router ospf 1
-{% for int in interface %}
- network {{int.ip}} 0.0.0.0 area 0
-{% endfor %}
+ network 172.31.182.17 0.0.0.0 area 0
+ network 172.31.182.33 0.0.0.0 area 0
 !
 ip access-list extended blockalltraffic
  deny tcp 172.31.182.16 0.0.0.127 any eq 23
@@ -33,4 +31,3 @@ ip access-list extended blockalltraffic
  permit ip 172.31.182.30 0.0.0.0 172.31.182.16 0.0.0.15
  deny ip 172.31.182.30 0.0.0.0 172.31.182.32 0.0.0.127
  permit ip any any
-{% endif %}
