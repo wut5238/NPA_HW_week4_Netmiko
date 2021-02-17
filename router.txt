@@ -1,0 +1,35 @@
+hostname {{name}}
+!
+{% if loopback %}
+interface loopback 0
+ ip address 172.20.182.{{num+4}} 255.255.255.255
+{% endif %}
+{% if router %}
+!
+{% for int in interface %}
+interface gi0/{{int.id}}
+ ip address {{int.ip}} {{int.netmask}}
+ description {{int.desc}}
+ cdp enable
+ no shutdown
+ exit
+!
+{% endfor %}
+router ospf 1
+{% for int in interface %}
+ network {{int.ip}} 0.0.0.0 area 0
+{% endfor %}
+!
+ip access-list extended block_management
+ deny tcp 172.31.182.16 0.0.0.15 172.31.182.0 0.0.0.31
+ deny tcp 172.31.182.32 0.0.0.15 172.31.182.0 0.0.0.31
+ deny tcp 172.31.182.48 0.0.0.15 172.31.182.0 0.0.0.31
+ deny tcp 172.31.182.64 0.0.0.15 172.31.182.0 0.0.0.31
+ permit any any
+!
+ip access-list extended allow_telnet_ssh
+ permit 
+!
+interface gi0/0
+ ip access-group block_management out
+{% endif %}

@@ -1,0 +1,77 @@
+---
+- name: S1
+  loopback: yes
+  num: -1
+  router: no
+  
+- name: R1
+  loopback: yes
+  num: 0
+  router: yes
+  interface:
+    - id: 1
+      ip: 172.31.182.17
+      netmask: 255.255.255.240
+      desc: "connect to R2"
+    - id: 2
+      ip: 172.31.182.33
+      netmask: 255.255.255.240
+      desc: "connect to R3"
+
+- name: R2
+  loopback: yes
+  num: 1
+  router: yes
+  interface:
+    - id: 1
+      ip: 172.31.182.18
+      netmask: 255.255.255.240
+      desc: "connect to R1"
+    - id: 2
+      ip: 172.31.182.49
+      netmask: 255.255.255.240
+      desc: "connect to R3"
+
+- name: R3
+  loopback: yes
+  num: 2
+  router: yes
+  interface:
+    - id: 1
+      ip: 172.31.182.34
+      netmask: 255.255.255.240
+      desc: "conect to R1"
+    - id: 2
+      ip: 172.31.182.50
+      netmask: 255.255.255.240
+      desc: "connect to R2"
+    - id: 3
+      ip: 172.31.182.65
+      netmask: 255.255.255.240
+      desc: "connect to S2"
+
+- name: R4
+  loopback: yes
+  num: 3
+  router: yes
+  interface:
+    - id: 1
+      ip: 172.31.182.66
+      netmask: 255.255.255.240
+      desc: "connect to S2"
+
+- name: S2
+  loopback: yes
+  num: 4
+  router: no
+
+- name: R5
+  loopback: yes
+  num: 4
+  router: yes
+  interface:
+    - id: 1
+      ip: 172.31.182.67
+      netmask: 255.255.255.240
+      desc: "connect to S2"
+      

@@ -172,4 +172,3 @@ def conf_ospf():
                 result = ssh.send_command('sh run | sect ospf')
         print()
         print(result)
-conf_ospf()
