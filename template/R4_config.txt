@@ -5,10 +5,12 @@ interface loopback 0
 !
 interface gi0/1
  ip address 172.31.182.66 255.255.255.240
+ cdp enable
  ip access-group blockalltraffic in
  description connect to G0/2 of S2
  no shutdown
  exit
+!
 !
 lldp run
 cdp run
@@ -16,11 +18,17 @@ cdp run
 router ospf 1
  network 172.31.182.66 0.0.0.0 area 0
 !
+!
+ip domain-lookup
+!
 ip access-list extended blockalltraffic
- deny tcp 172.31.182.16 0.0.0.127 any eq 23
- deny tcp 172.31.182.16 0.0.0.127 any eq 22
- deny ip any 172.31.182.0 0.0.0.15
  permit ip 172.31.182.30 0.0.0.0 172.31.182.33 0.0.0.0
  permit ip 172.31.182.30 0.0.0.0 172.31.182.16 0.0.0.15
  deny ip 172.31.182.30 0.0.0.0 172.31.182.32 0.0.0.127
+ permit tcp any 172.31.182.0 0.0.0.15 eq 22
+ permit tcp any 172.31.182.0 0.0.0.15 eq 23
+ permit icmp any 172.31.182.0 0.0.0.15
+ deny tcp 172.31.182.16 0.0.0.255 any eq 23
+ deny tcp 172.31.182.16 0.0.0.255 any eq 22
+ deny ip any 172.31.182.0 0.0.0.15
  permit ip any any

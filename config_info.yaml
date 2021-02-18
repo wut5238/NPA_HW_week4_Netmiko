@@ -81,8 +81,13 @@
   loopback: yes
   num: 5
   router: yes
+  nat: yes
   interface:
     - id: 1
       ip: 172.31.182.67
       netmask: 255.255.255.240
       desc: "connect to G0/3 of S2"
+    - id: 2
+      ip: "dhcp"
+      netmask: ""
+      desc: "connect to internet"
