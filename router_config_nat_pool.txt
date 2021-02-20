@@ -1,23 +1,24 @@
-hostname R5
+hostname {{name}}
 !
+{% if loopback %}
 interface loopback 0
- ip address 172.20.182.9 255.255.255.255
+ ip address 172.20.182.{{num+4}} 255.255.255.255
+{% endif %}
 !
-interface gi0/1
- ip address 172.31.182.67 255.255.255.240
+{% for int in interface %}
+interface gi0/{{int.id}}
+ {% if router %}
+ ip address {{int.ip}} {{int.netmask}}
+ {% endif %}
  cdp enable
  ip access-group blockalltraffic in
- description connect to G0/3 of S2
+ description {{int.desc}}
  no shutdown
  exit
-interface gi0/2
- ip address dhcp 
- cdp enable
- ip access-group blockalltraffic in
- description connect to internet
- no shutdown
- exit
+{% endfor %}
+{% if router %}
 !
+{% if nat %}
 access-list 1 permit 172.31.182.0 0.0.0.255
 ip nat pool internet 192.168.122.97 192.168.122.102 netmask 255.255.255.248
 ip nat inside source list 1 pool internet
@@ -27,14 +28,18 @@ interface g0/2
 interface g0/1
  ip nat inside
  exit
+{% endif %}
 !
 lldp run
 cdp run
 !
 router ospf 1
- network 172.31.182.67 0.0.0.0 area 0
- network dhcp 0.0.0.0 area 0
+{% for int in interface %}
+ network {{int.ip}} 0.0.0.0 area 0
+{% endfor %}
+{% if nat %}
  default-information originate
+{% endif %}
 !
 !
 ip domain-lookup
@@ -50,3 +55,4 @@ ip access-list extended blockalltraffic
  deny tcp 172.31.182.16 0.0.0.255 any eq 22
  deny ip any 172.31.182.0 0.0.0.15
  permit ip any any
+{% endif %}
