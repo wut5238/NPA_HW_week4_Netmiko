@@ -19,10 +19,7 @@ interface gi0/{{int.id}}
 {% if router %}
 !
 {% if nat %}
-ip route 0.0.0.0 0.0.0.0 g0/2
-ip nat pool internet 192.168.202.129 192.168.202.158 netmask 255.255.255.224
-access-list 1 permit 172.31.182.0 0.0.0.255
-ip nat inside source list 1 pool internet
+ip nat inside source static 172.31.182.30 192.168.122.100
 interface g0/2
  ip nat outside
  exit
@@ -39,7 +36,7 @@ router ospf 1
  network {{int.ip}} 0.0.0.0 area 0
 {% endfor %}
 {% if nat %}
-default-information originate
+ default-information originate
 {% endif %}
 !
 !

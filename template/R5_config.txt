@@ -18,10 +18,7 @@ interface gi0/2
  no shutdown
  exit
 !
-ip route 0.0.0.0 0.0.0.0 g0/2
-ip nat pool internet 192.168.202.129 192.168.202.158 netmask 255.255.255.224
-access-list 1 permit 172.31.182.0 0.0.0.255
-ip nat inside source list 1 pool internet
+ip nat inside source static 172.31.182.30 192.168.122.100
 interface g0/2
  ip nat outside
  exit
@@ -35,7 +32,7 @@ cdp run
 router ospf 1
  network 172.31.182.67 0.0.0.0 area 0
  network dhcp 0.0.0.0 area 0
-default-information originate
+ default-information originate
 !
 !
 ip domain-lookup
