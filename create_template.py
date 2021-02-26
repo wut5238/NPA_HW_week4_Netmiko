@@ -3,7 +3,7 @@ import yaml
 
 def create():
     env = Environment(loader=FileSystemLoader('/home/devasc/Desktop/NPA_HW_week4_Netmiko/'), trim_blocks=True, lstrip_blocks=True)
-    template = env.get_template('router.txt')
+    template = env.get_template('router_config_nat_pool.txt')
 
     devices = yaml.load(open('/home/devasc/Desktop/NPA_HW_week4_Netmiko/config_info.yaml'), Loader=yaml.FullLoader)
 
